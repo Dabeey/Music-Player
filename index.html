@@ -3,39 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player</title>
+    <title>Wildflower Glass Player</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/fc5e14da69.js" crossorigin="anonymous"></script>
-
 </head>
 <body>
-    <div class="container">
-        <div class="music-player">
-            <nav>
-                <div class="circle">
-                    <i class="fa-solid fa-angle-left"></i>
-                </div>
-                <div class="circle">
-                    <i class="fa-solid fa-bars"></i>
-                </div>
-            </nav>
-            <img src="music.png" alt="Music Cover" class="song-img">
+    <div class="player-bg"></div>
+    <div class="player-container">
+        <div class="album-art-wrap">
+            <svg class="progress-ring" width="260" height="260">
+                <circle class="progress-ring__bg" cx="130" cy="130" r="120"/>
+                <circle class="progress-ring__circle" cx="130" cy="130" r="120"/>
+            </svg>
+            <img src="music.png" alt="Music Cover" class="album-art">
+            <button class="play-btn" id="playPauseBtn">
+                <i class="fa-solid fa-play" id="ctrlIcon"></i>
+            </button>
+        </div>
+        <div class="song-info">
             <h1>WildFlower</h1>
             <p>LadyKusi ft Mercy</p>
-
-            <audio id="song">
-                <source src="wildflower.mp3" type="audio/mp3">
-            </audio>
-
-            <!-- Custom Progress Bar -->
-            <input type="range" value="0" id="progress">
-
-            <div class="controls">
-                <div><i class="fa-solid fa-backward"></i></div>
-                <div onclick="playPause()"><i class="fa-solid fa-play" id="ctrlIcon"></i></div>
-                <div><i class="fa-solid fa-forward"></i></div>
-
-            </div>
+        </div>
+        <audio id="song">
+            <source src="wildflower.mp3" type="audio/mp3">
+        </audio>
+        <div class="controls">
+            <button id="backward"><i class="fa-solid fa-backward"></i></button>
+            <span id="currentTime">0:00</span>
+            <span id="duration">0:00</span>
+            <button id="forward"><i class="fa-solid fa-forward"></i></button>
         </div>
     </div>
     <script src="script.js"></script>

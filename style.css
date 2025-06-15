@@ -1,152 +1,191 @@
-* {
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', 'sans-serif';
-    box-sizing: border-box;
-}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-body, .container {
+body {
+    min-height: 100vh;
     background: #181818;
-}
-
-.container {
-    width: 100%;
-    height: 100vh;
-    background: #181818;
+    font-family: 'Poppins', sans-serif;
     display: flex;
-    justify-content: center;
     align-items: center;
-    flex-wrap: wrap;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
 }
 
-.music-player {
+.player-bg {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 60% 40%, #00c89633 0%, #181818 80%);
+    z-index: 0;
+    filter: blur(60px);
+}
+
+.player-container {
+    position: relative;
+    z-index: 2;
+    width: 340px;
+    padding: 40px 20px 30px 20px;
     background: rgba(34, 34, 34, 0.7);
-    width: 400px;
-    padding: 25px 35px;
-    text-align: center;
+    border-radius: 32px;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 24px;
-    border: 1px solid rgba(255,255,255,0.18);
-    color: #fff;
-}
-
-nav {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     display: flex;
-    justify-content: space-between;
-    margin-top: 5px;
+    flex-direction: column;
+    align-items: center;
+    border: 1.5px solid rgba(255,255,255,0.13);
 }
 
-nav .circle {
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    background: rgba(255,255,255,0.15);
-    color: #00c896;
-    border: 1px solid #00c896;
-    box-shadow: 0 2px 8px rgba(0,200,150,0.15);
+.album-art-wrap {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    margin-bottom: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.song-img {
-    width: 220px;
-    border-radius: 20%;
+.album-art {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
     border: 8px solid rgba(255,255,255,0.7);
     box-shadow: 0 10px 60px rgba(80, 250, 123, 0.22);
-    margin-top: 20px;
-    margin-bottom: 20px;
-    object-fit: cover;
+    z-index: 2;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
 }
 
-.music-player h1 {
-    font-size: 20px;
-    font-weight: 400;
-    color: #fff;
-    margin-top: 20px;
+.progress-ring {
+    position: absolute;
+    left: 0; top: 0;
+    z-index: 1;
+    pointer-events: none;
 }
 
-.music-player p {
-    font-size: 14px;
-    color: #eee;
+.progress-ring__bg {
+    fill: none;
+    stroke: rgba(255,255,255,0.09);
+    stroke-width: 12;
 }
 
-#progress {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 6px;
-    background: linear-gradient(90deg, #00c896 0%, #fff 100%);
-    border-radius: 4px;
+.progress-ring__circle {
+    fill: none;
+    stroke: url(#gradient);
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 754;
+    stroke-dashoffset: 754;
+    transition: stroke-dashoffset 0.3s linear;
+    filter: drop-shadow(0 0 12px #00c89688);
+}
+
+.play-btn {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%,-50%);
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.18);
+    box-shadow: 0 4px 24px rgba(0,200,150,0.18);
+    color: #00c896;
+    font-size: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
     cursor: pointer;
-    margin: 40px 0;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+    outline: none;
 }
 
-#progress::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 30px;
-    height: 30px;
+.play-btn:active {
+    transform: translate(-50%,-50%) scale(0.95);
     background: #00c896;
-    border-radius: 50%;
-    border: 8px solid #fff;
-    box-shadow: 0 5px 5px rgba(80, 250, 123, 0.22);
+    color: #fff;
 }
 
-#progress::-moz-range-thumb {
-    width: 30px;
-    height: 30px;
-    background: #00c896;
-    border-radius: 50%;
-    border: 8px solid #fff;
-    box-shadow: 0 5px 5px rgba(80, 250, 123, 0.22);
+.song-info {
+    text-align: center;
+    margin-bottom: 18px;
 }
 
-#progress::-ms-thumb {
-    width: 30px;
-    height: 30px;
-    background: #00c896;
-    border-radius: 50%;
-    border: 8px solid #fff;
-    box-shadow: 0 5px 5px rgba(80, 250, 123, 0.22);
+.song-info h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+}
+
+.song-info p {
+    font-size: 1rem;
+    color: #eee;
+    opacity: 0.8;
 }
 
 .controls {
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 10px;
 }
 
-.controls div {
-    width: 60px;
-    height: 60px;
-    margin: 20px;
-    padding-left: 21px;
-    background: rgba(255,255,255,0.12);
-    display: inline-flex;
-    align-items: center;
+.controls button {
+    background: rgba(255,255,255,0.13);
+    border: none;
     border-radius: 50%;
+    width: 48px;
+    height: 48px;
     color: #00c896;
-    border: 1px solid #00c896;
-    box-shadow: 0 2px 8px rgba(0,200,150,0.15);
+    font-size: 1.3rem;
+    box-shadow: 0 2px 8px rgba(0,200,150,0.10);
     cursor: pointer;
     transition: background 0.2s, color 0.2s, transform 0.2s;
+    outline: none;
 }
 
-.controls div:hover {
+.controls button:active {
     background: #00c896;
     color: #fff;
-    transform: scale(1.1);
+    transform: scale(0.95);
 }
 
-.controls div:nth-child(2) {
-    transform: scale(1.5);
-    background: #00c896;
+.controls span {
     color: #fff;
-    border: none;
-    box-shadow: 0 4px 16px rgba(0,200,150,0.25);
-    padding-left: 25px;
+    font-size: 1rem;
+    min-width: 48px;
+    text-align: center;
+    opacity: 0.7;
+    user-select: none;
 }
 
-
+@media (max-width: 400px) {
+    .player-container {
+        width: 98vw;
+        padding: 10vw 2vw;
+    }
+    .album-art-wrap {
+        width: 60vw;
+        height: 60vw;
+        min-width: 180px;
+        min-height: 180px;
+    }
+    .album-art {
+        width: 45vw;
+        height: 45vw;
+        min-width: 120px;
+        min-height: 120px;
+    }
+    .progress-ring {
+        width: 60vw;
+        height: 60vw;
+        min-width: 180px;
+        min-height: 180px;
+    }
+}
