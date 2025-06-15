@@ -1,39 +1,39 @@
 const song = document.getElementById('song');
 const playPauseBtn = document.getElementById('playPauseBtn');
 const ctrlIcon = document.getElementById('ctrlIcon');
-const progressCircle = document.querySelector('.progress-ring__circle');
 const currentTimeEl = document.getElementById('currentTime');
 const durationEl = document.getElementById('duration');
 const backwardBtn = document.getElementById('backward');
 const forwardBtn = document.getElementById('forward');
+const waveform = document.getElementById('waveform');
 
-const RADIUS = 120;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+const WAVE_BARS = 40;
+let bars = [];
 
-// Set up SVG gradient for progress ring
-const svg = document.querySelector('.progress-ring');
-if (svg) {
-    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-    const grad = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
-    grad.setAttribute("id", "gradient");
-    grad.setAttribute("x1", "0%");
-    grad.setAttribute("y1", "0%");
-    grad.setAttribute("x2", "100%");
-    grad.setAttribute("y2", "0%");
-    grad.innerHTML = `
-        <stop offset="0%" stop-color="#00c896"/>
-        <stop offset="100%" stop-color="#fff"/>
-    `;
-    defs.appendChild(grad);
-    svg.insertBefore(defs, svg.firstChild);
+// Create waveform bars
+function createWaveform() {
+    waveform.innerHTML = '';
+    bars = [];
+    for (let i = 0; i < WAVE_BARS; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'wave-bar';
+        bar.style.height = `${Math.random() * 60 + 20}px`;
+        waveform.appendChild(bar);
+        bars.push(bar);
+    }
 }
+createWaveform();
 
-progressCircle.style.strokeDasharray = `${CIRCUMFERENCE}`;
-progressCircle.style.strokeDashoffset = `${CIRCUMFERENCE}`;
-
-function setProgress(percent) {
-    const offset = CIRCUMFERENCE - percent * CIRCUMFERENCE;
-    progressCircle.style.strokeDashoffset = offset;
+function updateWaveform(percent) {
+    const activeBars = Math.round(percent * WAVE_BARS);
+    bars.forEach((bar, i) => {
+        bar.style.background = i < activeBars
+            ? 'linear-gradient(180deg, #00c896 60%, #fff 100%)'
+            : 'rgba(255,255,255,0.08)';
+        bar.style.boxShadow = i < activeBars
+            ? '0 0 8px #00c89688'
+            : 'none';
+    });
 }
 
 function formatTime(sec) {
@@ -49,7 +49,11 @@ song.onloadedmetadata = function() {
 
 song.ontimeupdate = function() {
     currentTimeEl.textContent = formatTime(song.currentTime);
-    setProgress(song.currentTime / song.duration);
+    updateWaveform(song.currentTime / song.duration);
+    if (song.currentTime >= song.duration) {
+        ctrlIcon.classList.remove('fa-pause');
+        ctrlIcon.classList.add('fa-play');
+    }
 };
 
 playPauseBtn.onclick = playPause;
@@ -58,10 +62,12 @@ function playPause() {
         song.play();
         ctrlIcon.classList.remove('fa-play');
         ctrlIcon.classList.add('fa-pause');
+        playPauseBtn.classList.add('playing');
     } else {
         song.pause();
         ctrlIcon.classList.remove('fa-pause');
         ctrlIcon.classList.add('fa-play');
+        playPauseBtn.classList.remove('playing');
     }
 }
 
@@ -72,13 +78,27 @@ forwardBtn.onclick = () => {
     song.currentTime = Math.min(song.duration, song.currentTime + 10);
 };
 
-// Click on progress ring to seek
-document.querySelector('.album-art-wrap').addEventListener('click', function(e) {
+// Click waveform to seek
+waveform.addEventListener('click', function(e) {
     const rect = this.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width/2;
-    const y = e.clientY - rect.top - rect.height/2;
-    const angle = Math.atan2(y, x) + Math.PI/2;
-    let percent = angle / (2 * Math.PI);
-    if (percent < 0) percent += 1;
+    const percent = (e.clientX - rect.left) / rect.width;
     song.currentTime = percent * song.duration;
 });
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+        playPause();
+        e.preventDefault();
+    }
+    if (e.code === 'ArrowLeft') {
+        song.currentTime = Math.max(0, song.currentTime - 5);
+    }
+    if (e.code === 'ArrowRight') {
+        song.currentTime = Math.min(song.duration, song.currentTime + 5);
+    }
+});
+
+// Animate play button
+song.onplay = () => playPauseBtn.classList.add('playing');
+song.onpause = () => playPauseBtn.classList.remove('playing');

@@ -37,8 +37,8 @@ body {
 
 .album-art-wrap {
     position: relative;
-    width: 260px;
-    height: 260px;
+    width: 200px;
+    height: 200px;
     margin-bottom: 24px;
     display: flex;
     align-items: center;
@@ -57,30 +57,6 @@ body {
     left: 50%;
     top: 50%;
     transform: translate(-50%,-50%);
-}
-
-.progress-ring {
-    position: absolute;
-    left: 0; top: 0;
-    z-index: 1;
-    pointer-events: none;
-}
-
-.progress-ring__bg {
-    fill: none;
-    stroke: rgba(255,255,255,0.09);
-    stroke-width: 12;
-}
-
-.progress-ring__circle {
-    fill: none;
-    stroke: url(#gradient);
-    stroke-width: 12;
-    stroke-linecap: round;
-    stroke-dasharray: 754;
-    stroke-dashoffset: 754;
-    transition: stroke-dashoffset 0.3s linear;
-    filter: drop-shadow(0 0 12px #00c89688);
 }
 
 .play-btn {
@@ -103,10 +79,34 @@ body {
     outline: none;
 }
 
-.play-btn:active {
-    transform: translate(-50%,-50%) scale(0.95);
+.play-btn:active,
+.play-btn.playing {
     background: #00c896;
     color: #fff;
+    animation: pulse 1s infinite alternate;
+}
+@keyframes pulse {
+    0% { box-shadow: 0 0 24px #00c89644; }
+    100% { box-shadow: 0 0 48px #00c896cc; }
+}
+
+.waveform {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 2px;
+    width: 90%;
+    height: 80px;
+    margin: 24px auto 0 auto;
+    cursor: pointer;
+    user-select: none;
+}
+
+.wave-bar {
+    width: 6px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.08);
+    transition: background 0.2s, box-shadow 0.2s;
 }
 
 .song-info {
@@ -173,19 +173,16 @@ body {
     .album-art-wrap {
         width: 60vw;
         height: 60vw;
-        min-width: 180px;
-        min-height: 180px;
+        min-width: 120px;
+        min-height: 120px;
     }
     .album-art {
         width: 45vw;
         height: 45vw;
-        min-width: 120px;
-        min-height: 120px;
+        min-width: 80px;
+        min-height: 80px;
     }
-    .progress-ring {
-        width: 60vw;
-        height: 60vw;
-        min-width: 180px;
-        min-height: 180px;
+    .waveform {
+        height: 40px;
     }
 }
